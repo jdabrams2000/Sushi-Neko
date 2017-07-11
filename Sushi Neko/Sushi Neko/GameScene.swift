@@ -27,6 +27,21 @@ class GameScene: SKScene {
     /* Game management */
     var state: GameState = .title
     var playButton: MSButtonNode!
+    var healthBar: SKSpriteNode!
+    var health: CGFloat = 1.0 {
+        didSet {
+            /* Scale health bar between 0.0 -> 1.0 e.g 0 -> 100% */
+            healthBar.xScale = health
+            /* Cap Health */
+            if health > 1.0 { health = 1.0 }
+        }
+    }
+    var scoreLabel: SKLabelNode!
+    var score: Int = 0 {
+        didSet {
+            scoreLabel.text = String(score)
+        }
+    }
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
@@ -48,6 +63,8 @@ class GameScene: SKScene {
             /* Start game */
             self.state = .ready
         }
+        healthBar = childNode(withName: "healthBar") as! SKSpriteNode
+        scoreLabel = childNode(withName: "scoreLabel") as! SKLabelNode
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -87,6 +104,10 @@ class GameScene: SKScene {
             /* Add a new sushi piece to the top of the sushi tower */
             addRandomPieces(total: 1)
         }
+        /* Increment Health */
+        health += 0.1
+        /* Increment Score */
+        score += 1
     }
     
     func moveTowerDown() {
@@ -100,6 +121,16 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         moveTowerDown()
+        /* Called before each frame is rendered */
+        if state != .playing {
+            return
+        }
+        /* Decrease Health */
+        health -= 0.01
+        /* Has the player ran out of health? */
+        if health < 0 {
+            gameOver()
+        }
     }
     
     func addTowerPiece(side: Side) {
