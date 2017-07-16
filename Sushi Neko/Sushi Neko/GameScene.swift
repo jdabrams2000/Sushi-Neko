@@ -27,6 +27,7 @@ class GameScene: SKScene {
     /* Game management */
     var state: GameState = .title
     var playButton: MSButtonNode!
+    var healthBarHolder: SKSpriteNode!
     var healthBar: SKSpriteNode!
     var health: CGFloat = 1.0 {
         didSet {
@@ -160,6 +161,7 @@ class GameScene: SKScene {
         
         /* Add sushi piece to the sushi tower */
         sushiTower.append(newPiece)
+        
     }
     
     func addRandomPieces(total: Int) {
